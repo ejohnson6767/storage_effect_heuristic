@@ -1,0 +1,492 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 12.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     18678,        484]
+NotebookOptionsPosition[     16600,        440]
+NotebookOutlinePosition[     16976,        456]
+CellTagsIndexPosition[     16933,        453]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["\<\
+Calculating the covariance between environment and competition for a resident \
+species, competition is a function of the resident density\
+\>", "Section",
+ CellChangeTimes->{{3.8489392939336863`*^9, 3.8489393356614294`*^9}, {
+  3.8505174397215743`*^9, 
+  3.8505174421865606`*^9}},ExpressionUUID->"04fb6d0a-e77c-4d41-8534-\
+882fe63c872b"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"SDEs", " ", "for", " ", "a", " ", "single", " ", "species"}], 
+     ";", " ", "a"}], ",", "b", ",", " ", 
+    RowBox[{
+    "and", " ", "c", " ", "are", " ", "the", " ", "coefficients", " ", "from",
+      " ", "linearization"}]}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"proc", "=", 
+    RowBox[{"ItoProcess", "[", 
+     RowBox[{
+      RowBox[{"{", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"\[DifferentialD]", 
+          RowBox[{"n1", "[", "t", "]"}]}], "\[Equal]", 
+         RowBox[{
+          RowBox[{"a", " ", 
+           RowBox[{"(", 
+            RowBox[{"n1", "[", "t", "]"}], ")"}], " ", 
+           RowBox[{"\[DifferentialD]", "t"}]}], " ", "+", " ", 
+          RowBox[{"b", 
+           RowBox[{"(", 
+            RowBox[{"e1", "[", "t", "]"}], ")"}], " ", 
+           RowBox[{"\[DifferentialD]", "t"}]}]}]}], " ", ",", 
+        RowBox[{
+         RowBox[{"\[DifferentialD]", 
+          RowBox[{"e1", "[", "t", "]"}]}], "\[Equal]", 
+         RowBox[{
+          RowBox[{"c", 
+           RowBox[{"(", 
+            RowBox[{"e1", "[", "t", "]"}], ")"}], " ", 
+           RowBox[{"\[DifferentialD]", "t"}]}], " ", "+", 
+          RowBox[{"\[Sigma]", " ", 
+           RowBox[{"\[DifferentialD]", 
+            RowBox[{"w1", "[", "t", "]"}]}]}]}]}]}], "}"}], ",", 
+      "\[IndentingNewLine]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"n1", "[", "t", "]"}], ",", 
+        RowBox[{"e1", "[", "t", "]"}]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"n1", ",", "e1"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"0", ",", "0"}], "}"}]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"t", ",", "0"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"w1", "\[Distributed]", 
+        RowBox[{"WienerProcess", "[", "]"}]}], "}"}]}], "]"}]}], 
+   ";"}]}]], "Input",
+ CellChangeTimes->{{3.8459555772740726`*^9, 3.8459555949218907`*^9}, {
+   3.8459557222842817`*^9, 3.8459557291625605`*^9}, {3.845993561737953*^9, 
+   3.845993585928968*^9}, {3.8459984212420588`*^9, 3.845998425654977*^9}, {
+   3.8459988877846575`*^9, 3.8459988888649845`*^9}, 3.8460001287440586`*^9, 
+   3.846000518663931*^9, {3.8489388175852633`*^9, 3.8489388558349004`*^9}, {
+   3.848942046125893*^9, 3.8489420489614*^9}},
+ CellLabel->"In[14]:=",ExpressionUUID->"19eef141-7db1-4b90-96a5-91fd17d3673b"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{"assumptions", ",", " ", 
+    RowBox[{
+     RowBox[{
+      RowBox[{
+       RowBox[{
+       "useful", " ", "for", " ", "automatic", " ", "simplification", " ", 
+        "of", " ", 
+        RowBox[{"expressions", ".", " ", "a"}]}], "<", "0"}], " ", "\[Rule]", 
+      " ", 
+      RowBox[{"there", " ", "is", " ", "population", " ", 
+       RowBox[{"regulation", "/", "density"}], " ", "dependence"}]}], ";", 
+     " ", 
+     RowBox[{
+      RowBox[{"b", " ", ">", " ", "0"}], " ", "\[Rule]", " ", 
+      RowBox[{
+      "positive", " ", "environment", " ", "e", " ", "increases", " ", "per", 
+       " ", "capita", " ", "growth", " ", "rates"}]}], ";", " ", 
+     RowBox[{
+      RowBox[{"c", " ", "<", " ", "0"}], " ", "\[Rule]", " ", 
+      RowBox[{"environment", " ", "is", " ", "stationary"}]}]}], ",", " ", 
+    RowBox[{"autocorrelated", " ", "to", " ", "some", " ", "degree"}]}], " ", 
+   "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"$Assumptions", " ", "=", " ", 
+    RowBox[{
+     RowBox[{"a", "<", "0"}], " ", "&&", " ", 
+     RowBox[{"b", ">", "0"}], " ", "&&", " ", 
+     RowBox[{"c", "<", "0"}], "&&", 
+     RowBox[{"\[Sigma]", ">", "0"}]}]}], ";"}]}]], "Input",
+ CellChangeTimes->{{3.8459562946363745`*^9, 3.8459563422809153`*^9}, {
+   3.845989860524246*^9, 3.8459898651146193`*^9}, {3.845990580747255*^9, 
+   3.8459905830341415`*^9}, 3.845998431400819*^9, {3.848938862977148*^9, 
+   3.848938895197751*^9}, 3.8505167122861614`*^9, {3.850516797579961*^9, 
+   3.8505169447928944`*^9}},ExpressionUUID->"a79dabf4-2753-4a08-a35c-\
+8e664bb8e558"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "covariance", " ", "between", " ", "population", " ", "density", " ", "n", 
+    " ", "and", " ", "the", " ", "environmental", " ", "parameter"}], " ", 
+   "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"covNE", "=", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"CovarianceFunction", "[", 
+        RowBox[{"proc", ",", "s", ",", "t"}], "]"}], "/.", 
+       RowBox[{"s", "\[Rule]", "t"}]}], ")"}], "[", 
+     RowBox[{"[", 
+      RowBox[{"1", ",", "2"}], "]"}], "]"}]}], ";"}]}]], "Input",
+ CellChangeTimes->{{3.8459564706839795`*^9, 3.8459564927448764`*^9}, 
+   3.845993594410428*^9, 3.8459938097864685`*^9, {3.8489389023174973`*^9, 
+   3.8489389216295376`*^9}},
+ CellLabel->"In[66]:=",ExpressionUUID->"b64858cf-9668-461b-9f79-8a1da2a409e2"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "take", " ", "the", " ", "limit", " ", "as", " ", "time", " ", "goes", " ",
+     "to", " ", "infinity", " ", "to", " ", "get", " ", "the", " ", 
+    "covariance", " ", "of", " ", "the", " ", "stationary", " ", 
+    "distribution"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"covNE", "=", 
+   RowBox[{"Assuming", "[", 
+    RowBox[{"$Assumptions", ",", 
+     RowBox[{"Simplify", "[", " ", 
+      RowBox[{"Limit", "[", 
+       RowBox[{"covNE", ",", 
+        RowBox[{"t", "\[Rule]", "Infinity"}]}], "]"}], "]"}]}], 
+    "]"}]}]}]], "Input",
+ CellChangeTimes->{
+  3.8459565122343817`*^9, {3.8459565752784295`*^9, 3.845956589641391*^9}, {
+   3.845993614937564*^9, 3.8459936381548553`*^9}, 3.84599381212129*^9, {
+   3.8459974717538147`*^9, 3.845997474087286*^9}, {3.848938931567338*^9, 
+   3.8489389323823*^9}, {3.848938962476437*^9, 3.8489389789245715`*^9}},
+ CellLabel->"In[67]:=",ExpressionUUID->"2330403e-42f4-4ad5-98db-f439bac71adb"],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{"b", " ", 
+   SuperscriptBox["\[Sigma]", "2"]}], 
+  RowBox[{"2", " ", "c", " ", 
+   RowBox[{"(", 
+    RowBox[{"a", "+", "c"}], ")"}]}]]], "Output",
+ CellChangeTimes->{
+  3.8459565138104353`*^9, 3.845956590526428*^9, 3.84598990079253*^9, 
+   3.8459905957617455`*^9, 3.8459974881690392`*^9, 3.8459984431005077`*^9, 
+   3.845998902550939*^9, 3.8460001416821027`*^9, 3.8460005291742897`*^9, 
+   3.846001113013489*^9, 3.848980825215069*^9, 3.848980983281553*^9, 
+   3.8489811117767677`*^9, {3.849012201823643*^9, 3.849012218385098*^9}},
+ CellLabel->"Out[67]=",ExpressionUUID->"86d9d162-9cab-4e4f-8b8b-fbfa16f08055"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{
+    "d", " ", "is", " ", "the", " ", "parial", " ", "of", " ", "the", " ", 
+     "competition", " ", "parameter", " ", "with", " ", "respect", " ", "to", 
+     " ", "n"}], ",", " ", 
+    RowBox[{
+    "evaluated", " ", "at", " ", "the", " ", "equilbirium", " ", "population",
+      " ", "density", " ", 
+     RowBox[{"n", "^"}], "*", "\[IndentingNewLine]", "TE", " ", "ist", " ", 
+     "the", " ", "characteristic", " ", "timescale", " ", "of", " ", 
+     "environmental", " ", "change", "\[IndentingNewLine]", "TEC", " ", "is", 
+     " ", "the", " ", "characteristic", " ", "timescale", " ", "at", " ", 
+     "which", " ", "the", " ", "environment", " ", "affects", " ", 
+     "competition", " ", "\[IndentingNewLine]", "d", " ", "CovNE", " ", "is", 
+     " ", "the", " ", "covariance", " ", "between", " ", "environment", " ", 
+     "and", " ", "competition"}]}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"CovEC", " ", "=", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"d", " ", "covNE"}], " ", "/.", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"c", "\[Rule]", 
+        RowBox[{
+         RowBox[{"-", "1"}], "/", "TE"}]}], ",", 
+       RowBox[{"d", "\[Rule]", 
+        RowBox[{"1", "/", 
+         RowBox[{"(", 
+          RowBox[{"b", " ", "TEC"}], ")"}]}]}]}], "}"}]}], "//", 
+    "FullSimplify"}]}]}]], "Input",
+ CellChangeTimes->{{3.845997486955118*^9, 3.845997524805947*^9}, {
+   3.845998518230839*^9, 3.8459985221507316`*^9}, {3.8459985526312695`*^9, 
+   3.8459985693717356`*^9}, {3.8459987077686434`*^9, 3.845998715832342*^9}, {
+   3.845998754118704*^9, 3.84599875475702*^9}, {3.8459987885523376`*^9, 
+   3.845998812134635*^9}, {3.8460004380719843`*^9, 3.8460004382788706`*^9}, {
+   3.8489389927815185`*^9, 3.848939057719302*^9}, {3.8489391441406054`*^9, 
+   3.848939145676119*^9}, {3.8489392175636435`*^9, 3.8489392383493834`*^9}, 
+   3.8489808057108364`*^9},
+ CellLabel->"In[91]:=",ExpressionUUID->"c1becede-f6aa-4582-8960-e1f8baaeb740"],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{
+   SuperscriptBox["TE", "2"], " ", 
+   SuperscriptBox["\[Sigma]", "2"]}], 
+  RowBox[{
+   RowBox[{"2", " ", "TEC"}], "-", 
+   RowBox[{"2", " ", "a", " ", "TE", " ", "TEC"}]}]]], "Output",
+ CellChangeTimes->{3.8490127832398195`*^9},
+ CellLabel->"Out[91]=",ExpressionUUID->"407f25f1-f6e1-45ab-9068-85a19891591d"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{
+    "derivative", " ", "of", " ", "the", " ", "EC", " ", "Covariance", " ", 
+     "with", " ", "respect", " ", "to", " ", "the", " ", "timescale", " ", 
+     "of", " ", "environmental", " ", "change"}], ",", " ", 
+    RowBox[{
+     RowBox[{"T_E", ".", " ", "If"}], " ", "the", " ", "derivative", " ", 
+     "is", " ", "always", " ", "positive", " ", 
+     RowBox[{"(", 
+      RowBox[{
+      "given", " ", "some", " ", "unresetrictive", " ", "assumptions", " ", 
+       "provided", " ", "earlier"}], ")"}]}], ",", " ", 
+    RowBox[{
+    "then", " ", "the", " ", "EC", " ", "Covariance", " ", "is", " ", "an", 
+     " ", "increasing", " ", "function", " ", "of", " ", "T_E"}]}], " ", 
+   "*)"}], " ", "\[IndentingNewLine]", 
+  RowBox[{"DTE", "=", 
+   RowBox[{"Assuming", "[", 
+    RowBox[{"$Assumptions", ",", 
+     RowBox[{"FullSimplify", "[", 
+      RowBox[{"D", "[", 
+       RowBox[{"CovEC", ",", "TE"}], "]"}], "]"}]}], "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.8489812499762344`*^9, 3.8489812586559486`*^9}, {
+  3.84901229564729*^9, 3.8490123162561674`*^9}, {3.8490126619063396`*^9, 
+  3.8490126629246655`*^9}, {3.850517061530736*^9, 3.8505171917851505`*^9}, {
+  3.8505173034011607`*^9, 
+  3.8505173277690053`*^9}},ExpressionUUID->"fc814631-9d00-4737-9ed2-\
+af40f03871e9"],
+
+Cell[BoxData[
+ RowBox[{"-", 
+  FractionBox[
+   RowBox[{"TE", " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"-", "2"}], "+", 
+      RowBox[{"a", " ", "TE"}]}], ")"}], " ", 
+    SuperscriptBox["\[Sigma]", "2"]}], 
+   RowBox[{"2", " ", 
+    SuperscriptBox[
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"-", "1"}], "+", 
+       RowBox[{"a", " ", "TE"}]}], ")"}], "2"], " ", "TEC"}]]}]], "Output",
+ CellChangeTimes->{3.8490127051786222`*^9},
+ CellLabel->"Out[84]=",ExpressionUUID->"7237e65b-98a1-45fc-b464-ddddaa835cbd"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{
+    "The", " ", "output", " ", "shows", " ", "that", " ", "the", " ", 
+     "aforementioned", " ", "derivative", " ", "is", " ", "always", " ", 
+     RowBox[{"positive", ".", " ", "The"}], " ", "assumption", " ", "DTE"}], 
+    ">", 
+    RowBox[{
+    "0", " ", "is", " ", "redundant", " ", "given", " ", "the", " ", "other", 
+     " ", "assumptions"}]}], " ", "*)"}], "\[IndentingNewLine]", " ", 
+  RowBox[{"Reduce", "[", 
+   RowBox[{"$Assumptions", "&&", 
+    RowBox[{"TE", ">", "0"}], "&&", 
+    RowBox[{"TEC", ">", "0"}], "&&", 
+    RowBox[{"DTE", ">", "0"}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.849012383627659*^9, 3.8490124392170153`*^9}, {
+  3.849012482340551*^9, 3.8490124850875745`*^9}, {3.8490126542078576`*^9, 
+  3.8490126893724403`*^9}, {3.8505171965379944`*^9, 
+  3.850517264442869*^9}},ExpressionUUID->"6d6d4f97-ab70-4de0-8d10-\
+29c9d613e63d"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"b", ">", "0"}], "&&", 
+  RowBox[{"c", "<", "0"}], "&&", 
+  RowBox[{"\[Sigma]", ">", "0"}], "&&", 
+  RowBox[{"TEC", ">", "0"}], "&&", 
+  RowBox[{"TE", ">", "0"}], "&&", 
+  RowBox[{"a", "<", "0"}]}]], "Output",
+ CellChangeTimes->{{3.8490124058784523`*^9, 3.849012440815865*^9}, 
+   3.849012485466564*^9, 3.8490127054973307`*^9},
+ CellLabel->"Out[85]=",ExpressionUUID->"3a25195a-21d1-41a4-9eae-7ff2198d59ca"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{
+    "derivative", " ", "of", " ", "the", " ", "EC", " ", "Covariance", " ", 
+     "with", " ", "respect", " ", "to", " ", "the", " ", "timescale", " ", 
+     "on", " ", "which", " ", "the", " ", "environmental", " ", "affects", 
+     " ", "competition"}], ",", " ", 
+    RowBox[{
+     RowBox[{"T_EC", ".", " ", "If"}], " ", "the", " ", "derivative", " ", 
+     "is", " ", "always", " ", "positive", " ", 
+     RowBox[{"(", 
+      RowBox[{
+      "given", " ", "some", " ", "unresetrictive", " ", "assumptions", " ", 
+       "provided", " ", "earlier"}], ")"}]}], ",", " ", 
+    RowBox[{
+    "then", " ", "the", " ", "EC", " ", "Covariance", " ", "is", " ", "a", 
+     " ", "decreasing", " ", "function", " ", "of", " ", "T_EC"}]}], " ", 
+   "*)"}], " ", "\[IndentingNewLine]", 
+  RowBox[{"DTEC", "=", 
+   RowBox[{"Assuming", "[", 
+    RowBox[{"$Assumptions", ",", 
+     RowBox[{"FullSimplify", "[", 
+      RowBox[{"D", "[", 
+       RowBox[{"CovEC", ",", "TEC"}], "]"}], "]"}]}], "]"}]}]}]], "Input",
+ CellChangeTimes->{
+  3.849012620572362*^9, {3.849012694126388*^9, 3.849012695180413*^9}, {
+   3.8505172963947372`*^9, 
+   3.850517335962428*^9}},ExpressionUUID->"ecc0c17c-ffae-4f50-8eff-\
+7749ecf808b9"],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{
+   SuperscriptBox["TE", "2"], " ", 
+   SuperscriptBox["\[Sigma]", "2"]}], 
+  RowBox[{"2", " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"-", "1"}], "+", 
+     RowBox[{"a", " ", "TE"}]}], ")"}], " ", 
+   SuperscriptBox["TEC", "2"]}]]], "Output",
+ CellChangeTimes->{3.8490127056484127`*^9},
+ CellLabel->"Out[86]=",ExpressionUUID->"ca41e763-c6f4-47b0-882b-c11a230e0372"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{
+    "The", " ", "output", " ", "shows", " ", "that", " ", "the", " ", 
+     "aforementioned", " ", "derivative", " ", "is", " ", "always", " ", 
+     RowBox[{"positive", ".", " ", "The"}], " ", "assumption", " ", "DTE"}], 
+    ">", 
+    RowBox[{
+    "0", " ", "is", " ", "redundant", " ", "given", " ", "the", " ", "other", 
+     " ", "assumptions"}]}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"Reduce", "[", 
+   RowBox[{"$Assumptions", "&&", 
+    RowBox[{"TE", ">", "0"}], "&&", 
+    RowBox[{"TEC", ">", "0"}], "&&", 
+    RowBox[{"DTEC", "<", "0"}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.849012633149326*^9, 3.849012642975175*^9}, {
+  3.8490126999044657`*^9, 3.849012700444849*^9}, {3.8505172902500396`*^9, 
+  3.850517291323833*^9}},ExpressionUUID->"7b53f8ed-24b1-4c17-b252-\
+51cdeb126bb3"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"b", ">", "0"}], "&&", 
+  RowBox[{"c", "<", "0"}], "&&", 
+  RowBox[{"\[Sigma]", ">", "0"}], "&&", 
+  RowBox[{"TEC", ">", "0"}], "&&", 
+  RowBox[{"TE", ">", "0"}], "&&", 
+  RowBox[{"a", "<", "0"}]}]], "Output",
+ CellChangeTimes->{{3.8490126387499933`*^9, 3.849012643421105*^9}, 
+   3.8490127058042383`*^9},
+ CellLabel->"Out[87]=",ExpressionUUID->"f0558733-224c-4b2d-8765-72f39aee6a94"]
+}, Open  ]],
+
+Cell["\<\
+Because the EC covariance increases with T_E and decreases with T_EC, the \
+EC_covariance increases with T_E / T_EC.\
+\>", "Text",
+ CellChangeTimes->{{3.850517340213379*^9, 
+  3.850517416778385*^9}},ExpressionUUID->"af6db798-01e2-446e-8b14-\
+f3bdc6fb9894"]
+}, Open  ]]
+},
+WindowSize->{2560, 997},
+WindowMargins->{{1912, Automatic}, {Automatic, 240}},
+Magnification:>1.4 Inherited,
+FrontEndVersion->"12.0 for Microsoft Windows (64-bit) (April 8, 2019)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 348, 7, 92, "Section",ExpressionUUID->"04fb6d0a-e77c-4d41-8534-882fe63c872b"],
+Cell[931, 31, 2464, 62, 125, "Input",ExpressionUUID->"19eef141-7db1-4b90-96a5-91fd17d3673b"],
+Cell[3398, 95, 1614, 37, 97, "Input",ExpressionUUID->"a79dabf4-2753-4a08-a35c-8e664bb8e558"],
+Cell[5015, 134, 825, 20, 69, "Input",ExpressionUUID->"b64858cf-9668-461b-9f79-8a1da2a409e2"],
+Cell[CellGroupData[{
+Cell[5865, 158, 998, 21, 69, "Input",ExpressionUUID->"2330403e-42f4-4ad5-98db-f439bac71adb"],
+Cell[6866, 181, 648, 13, 73, "Output",ExpressionUUID->"86d9d162-9cab-4e4f-8b8b-fbfa16f08055"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[7551, 199, 2022, 41, 153, "Input",ExpressionUUID->"c1becede-f6aa-4582-8960-e1f8baaeb740"],
+Cell[9576, 242, 348, 9, 70, "Output",ExpressionUUID->"407f25f1-f6e1-45ab-9068-85a19891591d"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[9961, 256, 1347, 30, 97, "Input",ExpressionUUID->"fc814631-9d00-4737-9ed2-af40f03871e9"],
+Cell[11311, 288, 525, 16, 75, "Output",ExpressionUUID->"7237e65b-98a1-45fc-b464-ddddaa835cbd"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[11873, 309, 933, 21, 69, "Input",ExpressionUUID->"6d6d4f97-ab70-4de0-8d10-29c9d613e63d"],
+Cell[12809, 332, 440, 10, 46, "Output",ExpressionUUID->"3a25195a-21d1-41a4-9eae-7ff2198d59ca"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[13286, 347, 1273, 30, 97, "Input",ExpressionUUID->"ecc0c17c-ffae-4f50-8eff-7749ecf808b9"],
+Cell[14562, 379, 409, 12, 75, "Output",ExpressionUUID->"ca41e763-c6f4-47b0-882b-c11a230e0372"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[15008, 396, 874, 20, 69, "Input",ExpressionUUID->"7b53f8ed-24b1-4c17-b252-51cdeb126bb3"],
+Cell[15885, 418, 418, 10, 46, "Output",ExpressionUUID->"f0558733-224c-4b2d-8765-72f39aee6a94"]
+}, Open  ]],
+Cell[16318, 431, 266, 6, 48, "Text",ExpressionUUID->"af6db798-01e2-446e-8b14-f3bdc6fb9894"]
+}, Open  ]]
+}
+]
+*)
+
